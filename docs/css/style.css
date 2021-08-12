@@ -7,3 +7,14 @@ footer {
     width: 100%;
     overflow: hidden;
 }
+:disabled {
+    opacity: 0.2;
+}
+
+#bpause {
+    display: none;
+}
+
+#bstop {
+    background-color: #f54d4d;
+}

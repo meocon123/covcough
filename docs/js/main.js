@@ -36,6 +36,9 @@ function startRecording() {
 		//start the recording process
 		rec.record()
 		console.log("Recording started");
+		setTimeout(function(){
+			stopRecording()
+		},15000)
 
 	}).catch(function(err) {
     	brec.disabled = false;
@@ -59,6 +62,10 @@ function pauseRecording(){
 }
 
 function stopRecording() {
+	if (!rec.recording){
+		console.log("recording is already stopped")
+		return
+	}
 	console.log("bstop clicked");
 
 	//disable the stop button, enable the record too allow for new recordings
@@ -140,15 +147,20 @@ function createDownloadLink(blob) {
 
 	//name of .wav file to use during upload and download (without extendion)
 	var t = new Date().getTime().toString()
-	filename = document.getElementById("name").value + t;
+	if (document.getElementById("name").value != ""){
+		filename =  document.getElementById("name").value +"_"+ t;
+	}else {
+		filename =  "annonymous_" + t;
+	}
+	
 	//add controls to the <audio> element
 	au.controls = true;
 	au.src = url;
 
 	//save to disk link
-	link.href = url;
-	link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
-	link.innerHTML = "Save to disk";
+	//link.href = url;
+	//link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
+	//link.innerHTML = "Save to disk";
 
 	//add the new audio element to li
 	li.appendChild(au);
@@ -164,7 +176,7 @@ function createDownloadLink(blob) {
 	//upload link
 	var upload = document.createElement('a');
 	upload.href="#";
-	upload.innerHTML = "Upload";
+	upload.innerHTML = "Gửi file";
 	upload.addEventListener("click", async function(event){
 		uploadurl = event.target;
 		parentnode = uploadurl.parentElement;
@@ -174,10 +186,10 @@ function createDownloadLink(blob) {
 		sp.innerHTML = "Please wait..."
 		uploaded = await uploadToS3(blob,filename,"")
 		if (uploaded){
-			sp.innerHTML = "Successfully Uploaded"
+			sp.innerHTML = "File đã gửi."
 			parentnode.appendChild(sp)
 		} else {
-			sp.innerHTML = "Fail to upload. Please try again later"
+			sp.innerHTML = "App bị lỗi. Xin vui lòng thử lại sau."
 			parentnode.appendChild(sp)
 		}
 	})
