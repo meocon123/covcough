@@ -36,7 +36,9 @@ def getobj(bkt,key):
         objname = filemetadata["name"]
     except:
         objname = "unknown-file-name"
+    downloadurl = APIGATEWAY_LAMBDA+"/download/"+key
     return {
+        "downloadurl":downloadurl,
         "bucket":bkt,
         "objkey":key,
         "objsize":objsize,
@@ -47,13 +49,13 @@ def getobj(bkt,key):
 def app_handler(event, context):
     print(context.invoked_function_arn)
     objkey=event['Records'][0]['s3']['object']['key']
+    info=getobj(event['Records'][0]['s3']['bucket']['name'],event['Records'][0]['s3']['object']['key'])
     msg='''
 A new record was received. This file will expire in 10 days:
-
 ```
-{}/download/{}
+{}
 ```
-    '''.format(APIGATEWAY_LAMBDA,objkey)
+    '''.format(json.dumps(info, indent=4, sort_keys=True))
     
     payload = {
                     "icon_emoji": ":card_file_box:",
