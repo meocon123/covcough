@@ -1,0 +1,3 @@
+accountids    = ["yourID"]
+deploymentname = "uniquedeploymentname"
+SLACK_WEBHOOK = "YOUR SLACK WEBHOOK"

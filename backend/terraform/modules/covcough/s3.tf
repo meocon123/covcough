@@ -1,0 +1,88 @@
+// This is our bucket for storing data. Access is set to private and leveraging lifecycle rules, we can expire our objects base on their prefix.
+
+resource "aws_s3_bucket" "bucket" {
+  bucket = "covcough-${var.deploymentname}"
+  acl    = "private"
+
+  lifecycle_rule {
+    id      = "catchall"
+    enabled = true
+    expiration {
+      days = 10
+    }
+  }
+
+   cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET","PUT", "POST"]
+    allowed_origins = ["*"]
+    expose_headers = ["x-amz-meta-tag"]
+    max_age_seconds = 3000
+  }
+
+   server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+
+}
+
+resource "aws_s3_bucket_public_access_block" "bucket" {
+  bucket                  = aws_s3_bucket.bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+
+resource "aws_s3_bucket_notification" "processupload" {
+    bucket = aws_s3_bucket.bucket.id
+    lambda_function {
+        lambda_function_arn = aws_lambda_function.processupload.arn
+        events              = ["s3:ObjectCreated:*"]
+        filter_prefix       = "records/"
+    }
+}
+
+locals {
+  processuploadenvar = {
+    "APIGATEWAY_LAMBDA" = aws_api_gateway_deployment.covcough.invoke_url
+  }
+}
+
+
+// processupload lambda function, reuse covcough lambda role to get file metadata
+resource "aws_lambda_function" "processupload" {
+  function_name = "processupload-${var.deploymentname}-function"
+
+  filename         = var.processuploadfile
+  source_code_hash = filebase64sha256(var.processuploadfile)
+
+  handler = var.processuploadhandler
+  runtime = "python3.8"
+  timeout = 20
+  role    = aws_iam_role.covcough.arn
+
+  environment {
+    variables = merge(var.envvar,local.extraenvar,local.processuploadenvar)
+  }
+}
+
+// Allow s3 bucket to trigger/invoke processupload function
+resource "aws_lambda_permission" "createnofity_s3" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.processupload.arn
+  principal = "s3.amazonaws.com"
+  source_arn = aws_s3_bucket.bucket.arn
+}
+
+// processupload lambda cloudwatch log
+resource "aws_cloudwatch_log_group" "processupload" {
+  name              = "/aws/lambda/${aws_lambda_function.processupload.function_name}"
+  retention_in_days = 5
+}
