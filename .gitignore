@@ -130,4 +130,5 @@ dmypy.json
 .*
 terraform.tfvars
 *.zip
-
+*.hdf5
+*.wav

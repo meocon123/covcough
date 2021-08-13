@@ -1,7 +1,7 @@
 variable "deploymentname" {}
 variable "covcoughfile" {}
 variable "covcoughhandler" {}
-variable "processuploadfile" {}
+variable "processuploadimageurl" {}
 variable "processuploadhandler" {}
 
 variable "envvar" {

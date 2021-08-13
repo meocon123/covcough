@@ -6,14 +6,9 @@ data "archive_file" "apigateway" {
   output_path = "../code/apigateway.zip"
 }
 
-
-# A data source containing the lambda function for processing lambda
-data "archive_file" "processupload" {
-  source_file = "../code/processupload.py"
-  type = "zip"
-  output_path = "../code/processupload.zip"
+variable "processuploadimageurl" {
+  type = string
 }
-
 
 variable "accountids" {
   type = list(string)
@@ -25,8 +20,8 @@ variable "deploymentname" {
 }
 
 provider "aws" {
-  version             = "~> 3.5.0"
-  region              = "us-east-1"
+  version             = "~> 3.54.0"
+  region              = "ap-southeast-1"
   allowed_account_ids = var.accountids
 }
 
@@ -43,7 +38,7 @@ module "covcough" {
   deploymentname     = var.deploymentname
   covcoughfile    = "${data.archive_file.apigateway.output_path}"
   covcoughhandler = "apigateway.app_handler"
-  processuploadfile    = "${data.archive_file.processupload.output_path}"
+  processuploadimageurl    = var.processuploadimageurl
   processuploadhandler = "processupload.app_handler"
   envvar = {
     "APPURL"              = var.APPURL

@@ -59,12 +59,10 @@ locals {
 resource "aws_lambda_function" "processupload" {
   function_name = "processupload-${var.deploymentname}-function"
 
-  filename         = var.processuploadfile
-  source_code_hash = filebase64sha256(var.processuploadfile)
-
-  handler = var.processuploadhandler
-  runtime = "python3.8"
-  timeout = 20
+  image_uri = var.processuploadimageurl
+  package_type = "Image"
+  
+  timeout = 300
   role    = aws_iam_role.covcough.arn
 
   environment {

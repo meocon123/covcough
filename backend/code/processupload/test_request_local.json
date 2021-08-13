@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "us-east-1",
+            "eventTime": "2021-08-13T12:17:53.950Z",
+            "eventName": "ObjectCreated:Post",
+            "userIdentity": {
+                "principalId": "AWS:AROA3GC3KCD425HTGT3BZ:covcough-main-function"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "49.195.178.142"
+            },
+            "responseElements": {
+                "x-amz-request-id": "1GB6QMJF6SCKTGQP",
+                "x-amz-id-2": "LIopMQ5OvbzmMphTcVw1dtNdXjMjA4PC6z2Ka8PG3jMzgr7Vg4+0/ScfSmXsF9CTNNmOzgnnik0pTcBAgn+zr4RGpu3x+g5u"
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "tf-s3-lambda-20210812093551487500000001",
+                "bucket": {
+                    "name": "covcough-main",
+                    "ownerIdentity": {
+                        "principalId": "A1Z6R9X1FHRYPK"
+                    },
+                    "arn": "arn:aws:s3:::covcough-main"
+                },
+                "object": {
+                    "key": "records/cee74d4e72f305c2d4ed34d900863d62efb7946c0281215ff4fdee18aba4a391_unknown.wav",
+                    "size": 335916,
+                    "eTag": "8cda749610a8f24772183cf6fa50cc03",
+                    "sequencer": "00611662F4F098B41C"
+                }
+            }
+        }
+    ]
+}
