@@ -12,13 +12,17 @@
 
   </head>
   <body>
-    <h1>Nhận dạng covid19 qua tiếng ho</h1>
-    <p><small>Research project by <a href="https://sites.google.com/site/nguyendson/?fbclid=IwAR25kdHDGumG6ZHPonozNpMZzIfwg2Uz1BFOSUxkBji5QwTPoZNYLTHMjbA" target="_blank">Dr Nguyen Dinh Son</a></small></p>
-    <p>Xin mọi người ghi âm tiếng ho và ấn nút Gửi file</p>
-    <form><input id="name" placeholder="anonymous"></input>
-      <input type="radio" name="status" value="positive"><label for="HTML">Đã có kết quả Dương tính</label><br> 
-      <input type="radio" name="status" value="negative"><label for="CSS"> Đã có kết quả Âm tính</label><br> 
-      <input type="radio" name="status" value="unknown" checked><label for="JS"> Không có kết quả xét nghiệm</label><br>
+    <p>
+      <h2>Nhận dạng covid19 qua tiếng ho</h2>
+      <small>Research project by <a href="https://sites.google.com/site/nguyendson/?fbclid=IwAR25kdHDGumG6ZHPonozNpMZzIfwg2Uz1BFOSUxkBji5QwTPoZNYLTHMjbA" target="_blank"></a>Dr Nguyen Dinh Son</a></small>
+  </p>
+    <p>Xin bạn ghi âm tiếng ho</p>
+    <form><input id="name" placeholder="tên (không nhất thiết)"></input>
+      <br>
+      <span>Xin bạn chọn một trong 3 lựa chọn:</span><br>
+      <input type="radio" name="status" value="positive"><label for="HTML">Bạn đã có xét nghiệm dương tính</label><br> 
+      <input type="radio" name="status" value="negative"><label for="CSS">Bạn đã có xét nghiệm Âm tính</label><br> 
+      <input type="radio" name="status" value="unknown" checked><label for="JS">Bạn chưa đi xét nghiệm</label><br>
       <br>
     </form> 
     <div id="buttons">
@@ -26,7 +30,7 @@
   	 <button id="bpause" disabled>Pause</button>
   	 <button id="bstop" disabled>Stop</button>
     </div>
-  	<p><strong>List of recording:</strong></p>
+  	<p><strong>Danh sách thu âm:</strong><br><small style="opacity: 0.5;">Bạn chọn mẫu tốt nhất và ấn nút Gửi file</small></p>
   	<ol id="records"></ol>
     <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
   	<script src="js/recorder.js"></script>
