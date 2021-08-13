@@ -15,7 +15,12 @@
     <h1>Nhận dạng covid19 qua tiếng ho</h1>
     <p><small>Research project by <a href="https://sites.google.com/site/nguyendson/?fbclid=IwAR25kdHDGumG6ZHPonozNpMZzIfwg2Uz1BFOSUxkBji5QwTPoZNYLTHMjbA" target="_blank">Dr Nguyen Dinh Son</a></small></p>
     <p>Xin mọi người ghi âm tiếng ho và ấn nút Gửi file</p>
-    <p><input id="name" placeholder="anonymous"></input></p> 
+    <form><input id="name" placeholder="anonymous"></input>
+      <input type="radio" name="status" value="positive"><label for="HTML">Đã có kết quả Dương tính</label><br> 
+      <input type="radio" name="status" value="negative"><label for="CSS"> Đã có kết quả Âm tính</label><br> 
+      <input type="radio" name="status" value="unknown" checked><label for="JS"> Không có kết quả xét nghiệm</label><br>
+      <br>
+    </form> 
     <div id="buttons">
   	 <button id="brec">Record</button>
   	 <button id="bpause" disabled>Pause</button>

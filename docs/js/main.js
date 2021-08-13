@@ -86,15 +86,14 @@ function stopRecording() {
 	rec.exportWAV(createDownloadLink);
 }
 
-async function uploadToS3(datablob, originalfilename, metadata) {
+async function uploadToS3(datablob, originalfilename, status) {
     var body = document.body;
     body.classList.add("loading");
     console.log("Getting presigned s3 URL for upload.");
-    var url = lambdaurl + '/upload';
+    var url = lambdaurl + '/upload/'+status;
 
     var filemetadata = {
-        name:originalfilename,
-		meta: metadata
+        name:originalfilename
     }
 	
     try{
@@ -148,12 +147,13 @@ function createDownloadLink(blob) {
 	//name of .wav file to use during upload and download (without extendion)
 	var t = new Date().getTime().toString()
 	if (document.getElementById("name").value != ""){
-		filename =  document.getElementById("name").value +"_"+ t;
+		filename =  document.getElementById("name").value +"_";
 	}else {
-		filename =  "annonymous_" + t;
+		filename =  "anon_";
 	}
-	
-	//add controls to the <audio> element
+	status = document.querySelector("input[name=status]:checked").value;
+	filename += status + "_"
+	filename += t
 	au.controls = true;
 	au.src = url;
 
@@ -184,7 +184,7 @@ function createDownloadLink(blob) {
 		sp=document.createElement("span")
 		parentnode.appendChild(sp)
 		sp.innerHTML = "Please wait..."
-		uploaded = await uploadToS3(blob,filename,"")
+		uploaded = await uploadToS3(blob,filename,status)
 		if (uploaded){
 			sp.innerHTML = "File đã gửi."
 			parentnode.appendChild(sp)

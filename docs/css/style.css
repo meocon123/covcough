@@ -18,3 +18,7 @@ footer {
 #bstop {
     background-color: #f54d4d;
 }
+
+[type="checkbox"]+label, [type="radio"]+label {
+    padding-left: 5px;
+}

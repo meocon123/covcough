@@ -24,7 +24,7 @@ appurl = os.environ['APPURL']
 maxobjectsize = 200000000
 
 # getposturl generate request to create a pre-signed POST for uploading data to S3 for recording
-def getposturl(filename):
+def getposturl(filename,status):
     print("Generate post url!")
     s3 = boto3.client('s3',config=Config(region_name=awsregion, signature_version='s3v4'))
     fields = {
@@ -37,7 +37,7 @@ def getposturl(filename):
         ["starts-with", "$x-amz-meta-tag", ""]
     ]
 
-    keyname = "records/{filename}.wav".format(filename=filename)
+    keyname = "records/{}_{}.wav".format(filename,status)
 
     return s3.generate_presigned_post(Bucket=bkt,Key=keyname,Fields=fields,Conditions=conditions)
 
@@ -91,15 +91,17 @@ def app_handler(event, context):
     body = {"status_code":404}
     if path.startswith("/upload"):
         print("fileupload request received")
-        try:    
-            # generate a random filename to prevent bruteforce ;).
-            random = seed+str(time.time())+str(secrets.randbits(256))
-            h = hashlib.sha256()
-            h.update(random.encode("utf-8"))
-            filename = h.hexdigest()
-            print("Generate filename {}".format(filename))
-            body = getposturl(filename)
-            statuscode = 200
+        try:
+            status = path[8:].strip()
+            if (status in ["positive","negative","unknown"]):    
+                # generate a random filename to prevent bruteforce ;).
+                random = seed+str(time.time())+str(secrets.randbits(256))
+                h = hashlib.sha256()
+                h.update(random.encode("utf-8"))
+                filename = h.hexdigest()
+                print("Generate filename {}".format(filename))
+                body = getposturl(filename,status)
+                statuscode = 200
         except Exception as e: 
             print(e)
             pass
