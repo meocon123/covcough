@@ -83,3 +83,7 @@ body.showmodal .modal {
 body.showmodal .modal {
     display: block;
 }
+
+.hidden {
+  display: none;
+}

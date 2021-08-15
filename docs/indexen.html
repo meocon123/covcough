@@ -1,58 +1,66 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Covid coughing test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="css/holiday.min.css" crossorigin="anonymous">
+<head>
+  <meta charset="UTF-8">
+  <title>Covid coughing test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" href="css/holiday.min.css" crossorigin="anonymous">
 
-  </head>
-  <body>
-    <button style="background-color: #48c77400; position:absolute; margin-right:10px ;margin-top: 10px;top:0; right:0;" onclick='document.location="./index.html"'>🇻🇳</button>
-    <p>
-      <h2>Covid19 coughing test</h2>
-      <small>AI model developed by Dr Nguyen Dinh Son.</small>
-      <small><i><a href=http://dut.udn.vn/>University of Science and Technology,<br>The University of Danang</a></i></small>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+
+<body>
+  <button style="background-color: #48c77400; position:absolute; margin-right:10px ;margin-top: 10px;top:0; right:0;"
+    onclick='document.location="./index.html"'>🇻🇳</button>
+  <p>
+  <h2>Covid19 coughing test</h2>
+  <small>AI model developed by Dr Nguyen Dinh Son.</small>
+  <small><i><a href=http://dut.udn.vn />University of Science and Technology,<br>The University of
+      Danang</a></i></small>
   </p>
-    <form><input id="name" placeholder="tên (không nhất thiết)"></input>
-      <br>
-      <span><b>Please select one of the following options:</b></span><br>
-      <input type="radio" name="status" value="positive"><label for="HTML">You are tested Positive to Covid19.</label><br> 
-      <input type="radio" name="status" value="negative"><label for="CSS">You are tested Negative to Covid19.</label><br> 
-      <input type="radio" name="status" value="unknown" checked><label for="JS">You have not had any tested recently.</label><br>
-      <br>
-    </form> 
-    <p><b>Please record your coughing</b></p>
-    <div id="buttons">
-  	 <button id="brec">Record</button>
-  	 <button id="bpause" disabled>Pause</button>
-  	 <button id="bstop" disabled>Stop</button>
-    </div>
-  	<p><strong>List of records:</strong><br><small style="opacity: 0.5;">Please choose the best sample and send it.</small></p>
-  	<ol id="records"></ol>
+  <form id="statuschoices"><input id="name" placeholder="Name (optional)"></input>
+    <br>
+    <span><b>Please select one of the following options:</b></span><br>
+    <input type="radio" name="status" value="positive"><label for="HTML">You are tested Positive to Covid19.</label><br>
+    <input type="radio" name="status" value="negative"><label for="CSS">You are tested Negative to Covid19.</label><br>
+    <input type="radio" name="status" value="unknown" checked><label for="JS">You have not had any tested
+      recently.</label><br>
+    <br>
+  </form>
+  <p><b>Please record your coughing</b></p>
+  <div id="buttons">
+    <button id="brec">Record</button>
+    <button id="bpause" disabled>Pause</button>
+    <button id="bstop" disabled>Stop</button>
+  </div>
+  <p><strong>List of records:</strong><br><small style="opacity: 0.5;">Please choose the best sample and send
+      it.</small></p>
+  <ol id="records"></ol>
 
-    <div class="modal">
-			<div class="modal-grid">
-				<div id="modalstatus" class="modal-grid-item">
-					<p id="modalstatustext" class="loadingtext">Chờ kết quả ... </p>
-				</div>
-        <div id="modalimage" class="modal-grid-item">
-          <!-- <img style="padding-left:5%;max-width:90%" src=test.png> -->
-        </div>
-        
-			</div>
-		</div>
-    <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
-    <script>
-      resulttxt="Chance of you getting Covid-19 is "
-    </script>
-  	<script src="js/recorder.js"></script>
-  	<script src="js/main.js"></script>
-      <!-- <script src="https://dohliam.github.io/dropin-minimal-css/switcher.js" type="text/javascript"></script> -->
-  </body>
-  <!-- <footer class="footer">Site was written by San</footer> -->
+  <div class="modal">
+    <div class="modal-grid">
+      <div id="modalstatus" class="modal-grid-item">
+        <p id="modalstatustext" class="loadingtext">Chờ kết quả ... </p>
+      </div>
+      <div id="modalimage" class="modal-grid-item">
+        <!-- <img style="padding-left:5%;max-width:90%" src=test.png> -->
+      </div>
+
+    </div>
+  </div>
+  <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
+  <script>
+    resulttxt = "Chance of you getting Covid-19 is "
+    resulttxt = "This project is in the testing phase. These results are for reference only."
+    nomictxt = "This app requires microphone access to record your coughing sound."
+  </script>
+  <script src="js/recorder.js"></script>
+  <script src="js/main.js"></script>
+  <!-- <script src="https://dohliam.github.io/dropin-minimal-css/switcher.js" type="text/javascript"></script> -->
+</body>
+<!-- <footer class="footer">Site was written by San</footer> -->
+
 </html>

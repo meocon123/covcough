@@ -134,25 +134,6 @@ def app_handler(event, context):
 
 # Our debug main - We use this to test things locally as it's not used by lambda function.
 if __name__ == '__main__':
-    ### Form a POST curl request that would let me upload an image to relaysecret bucket.
-    try:
-        expiretime=int(sys.argv[1])
-    except:
-        expiretime=5
-    # resp=getposturl(expiretime)
-    # resp=gettunnelposturl("30a5ee6a97ff71e4")
-    # print(resp)
-    # resp['fields']['file'] = '@{key}'.format(key="kb.txt")
-    # form_values = "  ".join(["-F {key}={value} ".format(key=key, value=value)
-    #                     for key, value in resp['fields'].items()])
-    # # Construct a curl command to upload an image kb.jpg file to S3 :) 
-    # print('curl command: \n')
-    # print('curl -v -F "x-amz-meta-tag=test" -F content-type=text/plain {form_values} {url}'.format(form_values=form_values, url=resp['url']))
-    print(gettunnellist("30a5ee6a97ff71e4"))
-    print(getobj("1day/30a5ee6a97ff71e4/cd940555754b33582d5445972f62eb6ef14eef617670c8e73251925a87ce20a1"))
-    # print('')
-
-    # Check Sha1 for eicar file.
-    # print(json.dumps(checkvirus("3395856ce81f2b7382dee72602f798b642f14140")))
+    print(json.dumps(getposturl("test","positive"))
     
     
