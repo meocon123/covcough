@@ -130,7 +130,7 @@ def prediction_COVID(lmodel, filename, person, nmels=64):
             pos1.append(prob[0][1])
             pos2.append(prob[0])
         test = np.mean(pos1)
-        text = 'Bạn có nguy cơ nhiễm Covid-19 với xác suất là {prob}%'.format(
+        text = '{prob}'.format(
             prob=round(test*100, 2))
     # Plot the result of each cough sound
         result = pd.DataFrame(pos2, columns=['Healthy', 'COVID-19'])

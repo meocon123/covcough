@@ -94,16 +94,21 @@ function stopRecording() {
 	rec.exportWAV(createDownloadLink);
 }
 
-async function pollresult(resultjson) {
+async function pollresult(resultjson,counter) {
+	counter+=1;
 	pngresult=resultjson.pngresult;
 	jsonresult=resultjson.jsonresult;
 	let response = await fetch(jsonresult.signedurl)
+	if (counter > 60){
+		updatemodaltext("Something went wrong... Please try again",false)
+		return
+	}
 	if (response.status != 200) {
 		await new Promise(resolve => setTimeout(resolve, 1000));
-		await pollresult(resultjson);
+		await pollresult(resultjson,counter);
 	} else {
 		data = await response.json();
-		updatemodaltext(data.Result)
+		updatemodaltext(resulttxt + data.Result)
 		updatemodalimage(pngresult.signedurl)
 	}
 }
@@ -170,7 +175,7 @@ async function uploadToS3(datablob, originalfilename, status) {
         if (response.status == 204) {
 			updatemodaltext("Please wait for result ...",true);
             console.log("File successfully uploaded!");
-			pollresult(responsejson);
+			pollresult(responsejson, 0);
 			// document.body.classList.remove("showmodal");
 			return true
         } else {
