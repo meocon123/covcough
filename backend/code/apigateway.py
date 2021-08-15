@@ -16,7 +16,7 @@ from botocore.client import Config
 
 
 bkt = os.getenv('BUCKETNAME',None)
-awsregion = "us-east-1"
+awsregion = "ap-southeast-1"
 seed = os.environ['SEED']
 appurl = os.environ['APPURL']
 
@@ -26,7 +26,7 @@ maxobjectsize = 200000000
 # getposturl generate request to create a pre-signed POST for uploading data to S3 for recording
 def getposturl(filename,status):
     print("Generate post url!")
-    s3 = boto3.client('s3',config=Config(region_name=awsregion, signature_version='s3v4'))
+    s3 = boto3.client('s3',endpoint_url='https://s3.ap-southeast-1.amazonaws.com',config=Config(region_name=awsregion, signature_version='s3v4'))
     fields = {
             "acl": "private",
             }
@@ -38,20 +38,18 @@ def getposturl(filename,status):
     ]
 
     keyname = "records/{}_{}.wav".format(filename,status)
+    resp={
+        "signedupload":s3.generate_presigned_post(Bucket=bkt,Key=keyname,Fields=fields,Conditions=conditions),
+        "pngresult": getobj("results/{}_{}.png".format(filename,status)),
+        "jsonresult": getobj("results/{}_{}.json".format(filename,status))
+    }
+    
 
-    return s3.generate_presigned_post(Bucket=bkt,Key=keyname,Fields=fields,Conditions=conditions)
+    return resp
 
 # getobj generate link to download /results/{sha256}.img
 def getobj(key):
     s3 = boto3.client('s3', config=Config(region_name=awsregion, signature_version='s3v4'))
-    # response = s3.head_object(Bucket=bkt, Key=key)
-    # objsize = response['ContentLength']
-    # objname = ""
-    # try:
-    #     filemetadata = json.loads(response['ResponseMetadata']['HTTPHeaders']['x-amz-meta-tag'])
-    #     objname = filemetadata["name"]
-    # except:
-    #     objname = "unknown"
     return {
         "signedurl": s3.generate_presigned_url(
             'get_object',
@@ -93,7 +91,7 @@ def app_handler(event, context):
         print("fileupload request received")
         try:
             status = path[8:].strip()
-            if (status in ["positive","negative","unknown"]):    
+            if (status in ["positive","negative","unknown","demosite"]):    
                 # generate a random filename to prevent bruteforce ;).
                 random = seed+str(time.time())+str(secrets.randbits(256))
                 h = hashlib.sha256()

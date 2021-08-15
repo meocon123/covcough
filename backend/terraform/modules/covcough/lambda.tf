@@ -1,7 +1,7 @@
 // covcough lambda function
 resource "aws_lambda_function" "covcough" {
   function_name = "covcough-${var.deploymentname}-function"
-
+  memory_size = 128
   filename         = var.covcoughfile
   source_code_hash = filebase64sha256(var.covcoughfile)
 

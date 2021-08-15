@@ -18,33 +18,31 @@
   </p>
     <form><input id="name" placeholder="tên (không nhất thiết)"></input>
       <br>
-      <span><b>Mời bạn chọn một trong 3 lựa chọn:</b></span><br>
-      <input type="radio" name="status" value="positive"><label for="HTML">Bạn đã có xét nghiệm dương tính</label><br> 
-      <input type="radio" name="status" value="negative"><label for="CSS">Bạn đã có xét nghiệm Âm tính</label><br> 
-      <input type="radio" name="status" value="unknown" checked><label for="JS">Bạn chưa đi xét nghiệm</label><br>
+      <span><b>Please select one of the following options:</b></span><br>
+      <input type="radio" name="status" value="positive"><label for="HTML">You are tested Positive to Covid19.</label><br> 
+      <input type="radio" name="status" value="negative"><label for="CSS">You are tested Negative to Covid19.</label><br> 
+      <input type="radio" name="status" value="unknown" checked><label for="JS">You have not had any tested recently.</label><br>
       <br>
     </form> 
-    <p><b>Mời bạn ghi âm tiếng ho</b></p>
+    <p><b>Please record your coughing</b></p>
     <div id="buttons">
   	 <button id="brec">Record</button>
   	 <button id="bpause" disabled>Pause</button>
   	 <button id="bstop" disabled>Stop</button>
     </div>
-  	<p><strong>Danh sách thu âm:</strong><br><small style="opacity: 0.5;">Bạn chọn mẫu tốt nhất và ấn nút Gửi file</small></p>
+  	<p><strong>List of records:</strong><br><small style="opacity: 0.5;">Please choose the best sample and send it.</small></p>
   	<ol id="records"></ol>
-    
+
     <div class="modal">
 			<div class="modal-grid">
-				<div id="modalstatus" class="modal-grid-item">
-					<p id="modalstatustext" class="loadingtext">Chờ kết quả ... </p>
+				<div id="modalstatus" class="modal-grid-item loadingtext">
+					Please wait ...
 				</div>
         <div id="modalimage" class="modal-grid-item">
-          <!-- <img style="padding-left:5%;max-width:90%" src=test.png> -->
+          <img style="width:100%;max-width:300px" src=test.png>
         </div>
-        
 			</div>
 		</div>
-
     <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
   	<script src="js/recorder.js"></script>
   	<script src="js/main.js"></script>

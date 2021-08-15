@@ -4,6 +4,14 @@ var lambdaurl = 'https://79hxxpdvf2.execute-api.ap-southeast-1.amazonaws.com/alp
 var audioStream; 						//stream from getUserMedia()
 var rec; 							//Recorder.js object
 var input; 							//MediaStreamAudioSourceNode we'll be recording
+demosite=false;
+if (document.location.origin.indexOf("localhost") != -1 || document.location.origin.indexOf("covcough.surge.sh") != -1) {
+	document.getElementById("name").value="demositedata_pleaseignore"
+	document.getElementById("name").style.display="none";
+	demosite=true;
+}
+
+// document.body.classList.add("showmodal");
 
 // shim for AudioContext when it's not avb. 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -86,9 +94,43 @@ function stopRecording() {
 	rec.exportWAV(createDownloadLink);
 }
 
+async function pollresult(resultjson) {
+	pngresult=resultjson.pngresult;
+	jsonresult=resultjson.jsonresult;
+	let response = await fetch(jsonresult.signedurl)
+	if (response.status != 200) {
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		await pollresult(resultjson);
+	} else {
+		data = await response.json();
+		updatemodaltext(data.Result)
+		updatemodalimage(pngresult.signedurl)
+	}
+}
+
+function updatemodalimage(url){
+	modalimage=document.getElementById("modalimage");
+	modalimage.innerHTML = "";
+	img =document.createElement('img');
+	img.src=url
+	img.style.cssText = "padding-left: 5%;max-width: 90%;"
+	modalimage.appendChild(img);
+}
+
+function updatemodaltext(text,flashing = false){
+	modaltext=document.getElementById("modalstatustext")
+	if (flashing){
+		modaltext.classList.add("loadingtext");
+	} else {
+		modaltext.classList.remove("loadingtext");
+	}
+	modaltext.innerText = text;
+}
+
 async function uploadToS3(datablob, originalfilename, status) {
     var body = document.body;
-    body.classList.add("loading");
+    body.classList.add("showmodal");
+	updatemodaltext("Getting presigned key to upload ...",true)
     console.log("Getting presigned s3 URL for upload.");
     var url = lambdaurl + '/upload/'+status;
 
@@ -99,33 +141,41 @@ async function uploadToS3(datablob, originalfilename, status) {
     try{
         response = await fetch(url);
         if (response.ok) {
-            data = await response.json()
+            responsejson = await response.json()
         }  
         else {
+			updatemodaltext("Error ...",false)
 			console.log("Error getting presigned key for upload")
+			document.body.classList.remove("showmodal");
             return false
         }
+
+		signedupload = responsejson.signedupload
 
         const formData = new FormData();
         formData.append("Content-Type", "audio/wav");
         formData.append("x-amz-meta-tag",(JSON.stringify(filemetadata)))
-        Object.entries(data.fields).forEach(([k, v]) => {
+        Object.entries(signedupload.fields).forEach(([k, v]) => {
             formData.append(k, v);
         });
         formData.append("file", datablob);
-
+		updatemodaltext("Uploading to S3 ...",true)
         response = await fetch(
-            data.url, 
+            signedupload.url, 
             {
                 method: "POST",
                 body: formData,
             })
 
         if (response.status == 204) {
-            console.log("File successfully uploaded!")
+			updatemodaltext("Please wait for result ...",true);
+            console.log("File successfully uploaded!");
+			pollresult(responsejson);
+			// document.body.classList.remove("showmodal");
 			return true
         } else {
             console.log("Fail to upload file!")
+			document.body.classList.remove("showmodal");
 			return false
         }
     }
@@ -152,6 +202,9 @@ function createDownloadLink(blob) {
 		filename =  "anon_";
 	}
 	status = document.querySelector("input[name=status]:checked").value;
+	if (demosite == true){
+		status="demosite"
+	}
 	filename += status + "_"
 	filename += t
 	au.controls = true;

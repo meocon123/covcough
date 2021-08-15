@@ -170,9 +170,10 @@ def processsample():
 
 
 def lambda_handler(event, context):
+    tmppath = "/tmp/"
     bucket = event['Records'][0]['s3']['bucket']['name']
     objkey = event['Records'][0]['s3']['object']['key']
-    filename = objkey.split("/")[-1]
+    filename = tmppath+objkey.split("/")[-1]
     pngresult=filename[:-4]+".png"
     jsonresult=filename[:-4]+".json"
 
@@ -194,15 +195,15 @@ def lambda_handler(event, context):
     f=open(jsonresult,'w')
     f.write(json.dumps({"Result":text}))
     f.close()
-    s3.upload_file(pngresult,bucket,"results/"+pngresult)
-    s3.upload_file(jsonresult,bucket,"results/"+jsonresult)
+    s3.upload_file(pngresult,bucket,"results/"+pngresult.split("/")[-1])
+    s3.upload_file(jsonresult,bucket,"results/"+jsonresult.split("/")[-1])
 
     os.remove(filename)
     os.remove(pngresult)
     os.remove(jsonresult)
 
     info = getobjmeta(bucket,objkey)
-    info["resulturl"]= APIGATEWAY_LAMBDA+"/download/results/"+pngresult
+    info["resulturl"]= APIGATEWAY_LAMBDA+"/download/results/"+pngresult.split("/")[-1]
     msg = '''
 A new record was received. This file will expire in 10 days:
 ```

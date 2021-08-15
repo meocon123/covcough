@@ -17,7 +17,7 @@ resource "aws_s3_bucket" "bucket" {
     allowed_methods = ["GET","PUT", "POST"]
     allowed_origins = ["*"]
     expose_headers = ["x-amz-meta-tag"]
-    max_age_seconds = 3000
+    max_age_seconds = 2000
   }
 
    server_side_encryption_configuration {
@@ -51,6 +51,8 @@ resource "aws_s3_bucket_notification" "processupload" {
 locals {
   processuploadenvar = {
     "APIGATEWAY_LAMBDA" = aws_api_gateway_deployment.covcough.invoke_url
+    "NUMBA_CACHE_DIR" = "/tmp"
+    "LD_LIBRARY_PATH" = "/var/lang/lib:/lib64:/usr/lib64:/var/runtime:/var/runtime/lib:/var/task:/var/task/lib:/opt/lib"
   }
 }
 
@@ -61,7 +63,7 @@ resource "aws_lambda_function" "processupload" {
 
   image_uri = var.processuploadimageurl
   package_type = "Image"
-  
+  memory_size = 3008
   timeout = 300
   role    = aws_iam_role.covcough.arn
 
