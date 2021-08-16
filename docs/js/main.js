@@ -246,7 +246,7 @@ function createDownloadLink(blob) {
 	//upload link
 	var upload = document.createElement('button');
 	upload.href = "#";
-	upload.innerHTML = "Gửi file";
+	upload.innerHTML = sendfilebuttontxt;
 	upload.addEventListener("click", async function (event) {
 		uploadurl = event.target;
 		parentnode = uploadurl.parentElement;
@@ -256,10 +256,10 @@ function createDownloadLink(blob) {
 		sp.innerHTML = "Please wait..."
 		uploaded = await uploadToS3(blob, filename, status)
 		if (uploaded) {
-			sp.innerHTML = "File đã gửi."
+			sp.innerHTML = filesenttxt;
 			parentnode.appendChild(sp)
 		} else {
-			sp.innerHTML = "App bị lỗi. Xin vui lòng thử lại sau."
+			sp.innerHTML = "Error... Please try again later."
 			parentnode.appendChild(sp)
 		}
 	})
