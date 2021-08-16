@@ -173,6 +173,11 @@ def lambda_handler(event, context):
     tmppath = "/tmp/"
     bucket = event['Records'][0]['s3']['bucket']['name']
     objkey = event['Records'][0]['s3']['object']['key']
+    try:
+        sourceip = event['Records'][0]['requestParameters']['sourceIPAddress'] 
+    except:
+        sourceip = "N/A"
+
     filename = tmppath+objkey.split("/")[-1]
     pngresult=filename[:-4]+".png"
     jsonresult=filename[:-4]+".json"
@@ -204,6 +209,8 @@ def lambda_handler(event, context):
 
     info = getobjmeta(bucket,objkey)
     info["resulturl"]= APIGATEWAY_LAMBDA+"/download/results/"+pngresult.split("/")[-1]
+    info["sourceip"]=sourceip
+    
     msg = '''
 A new record was received. This file will expire in 10 days:
 ```

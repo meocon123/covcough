@@ -50,7 +50,7 @@ resource "aws_s3_bucket_notification" "processupload" {
 
 locals {
   processuploadenvar = {
-    "APIGATEWAY_LAMBDA" = aws_api_gateway_deployment.covcough.invoke_url
+    "APIGATEWAY_LAMBDA" = "${aws_api_gateway_deployment.covcough.invoke_url}${aws_api_gateway_stage.covcough_alpha.stage_name}"
     "NUMBA_CACHE_DIR" = "/tmp"
     "LD_LIBRARY_PATH" = "/var/lang/lib:/lib64:/usr/lib64:/var/runtime:/var/runtime/lib:/var/task:/var/task/lib:/opt/lib"
   }

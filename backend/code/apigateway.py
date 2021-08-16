@@ -134,6 +134,4 @@ def app_handler(event, context):
 
 # Our debug main - We use this to test things locally as it's not used by lambda function.
 if __name__ == '__main__':
-    print(json.dumps(getposturl("test","positive"))
-    
-    
+    print(json.dumps(getposturl("test","positive")))

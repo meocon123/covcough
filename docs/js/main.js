@@ -1,5 +1,5 @@
 // Change to your lambda endpoint here
-var lambdaurl = 'https://79hxxpdvf2.execute-api.ap-southeast-1.amazonaws.com/alpha';
+var lambdaurl = 'https://api.covcough.com';
 
 var audioStream; 						//stream from getUserMedia()
 var rec; 							//Recorder.js object

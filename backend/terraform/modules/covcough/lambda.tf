@@ -36,7 +36,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
   principal     = "apigateway.amazonaws.com"
 
   // More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "${aws_api_gateway_deployment.covcough.execution_arn}/*/*"
+  source_arn = "${aws_api_gateway_deployment.covcough.execution_arn}${aws_api_gateway_stage.covcough_alpha.stage_name}/*/*"
   /*--*/
 }
 
@@ -93,17 +93,37 @@ resource "aws_api_gateway_integration" "proxy_root_to_lambda" {
   uri                     = aws_lambda_function.covcough.invoke_arn
 }
 
-
 resource "aws_api_gateway_deployment" "covcough" {
   depends_on = [
     aws_api_gateway_integration.proxy_to_lambda,
     aws_api_gateway_integration.proxy_root_to_lambda,
   ]
-
+  
   rest_api_id = aws_api_gateway_rest_api.covcough.id
-  stage_name  = "alpha"
 }
 
+// Recommended way to create stage_name is via aws_api_gateway_stage resource rather than using stage_name value in aws_api_gateway_deployment block
+resource "aws_api_gateway_stage" "covcough_alpha" {
+  deployment_id = aws_api_gateway_deployment.covcough.id
+  rest_api_id   = aws_api_gateway_rest_api.covcough.id
+  stage_name    = "alpha"
+}
+
+// Custom domain for our lambda function
+resource "aws_api_gateway_domain_name" "apicertificate" {
+  certificate_arn = var.apicustomdomaincertificatearn
+  domain_name     = var.apicustomdomain
+}
+
+
+// Mapping custom domain to our gateway address
+resource "aws_api_gateway_base_path_mapping" "gatewaypath" {
+  api_id      = aws_api_gateway_rest_api.covcough.id
+  stage_name  = aws_api_gateway_stage.covcough_alpha.stage_name
+  domain_name = aws_api_gateway_domain_name.apicertificate.domain_name
+}
+
+
 output "base_url" {
-  value = aws_api_gateway_deployment.covcough.invoke_url
+  value = "${aws_api_gateway_deployment.covcough.invoke_url}${aws_api_gateway_stage.covcough_alpha.stage_name}"
 }

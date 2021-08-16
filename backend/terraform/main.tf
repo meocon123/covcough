@@ -33,6 +33,13 @@ variable "SLACK_WEBHOOK" {
     default="none"
 }
 
+variable "apicustomdomain" {
+  type = string
+}
+variable "apicustomdomaincertificatearn" {
+  type = string
+}
+
 module "covcough" {
   source             = "./modules/covcough"
   deploymentname     = var.deploymentname
@@ -40,6 +47,8 @@ module "covcough" {
   covcoughhandler = "apigateway.app_handler"
   processuploadimageurl    = var.processuploadimageurl
   processuploadhandler = "processupload.app_handler"
+  apicustomdomain = var.apicustomdomain
+  apicustomdomaincertificatearn = var.apicustomdomaincertificatearn
   envvar = {
     "APPURL"              = var.APPURL
     "SLACK_WEBHOOK"       = var.SLACK_WEBHOOK
