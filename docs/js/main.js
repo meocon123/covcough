@@ -1,6 +1,12 @@
 // Change to your lambda endpoint here
 var lambdaurl = 'https://api.covcough.com';
 
+// Temporary redirect when the app is still in development.
+if (document.location.origin.indexOf("localhost") != -1 || document.location.origin.indexOf("surge.sh") != -1){
+	document.location = "./underconstruction.html";
+}
+
+
 var audioStream; 						//stream from getUserMedia()
 var rec; 							//Recorder.js object
 var input; 							//MediaStreamAudioSourceNode we'll be recording
