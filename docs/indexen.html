@@ -30,7 +30,7 @@
       recently.</label><br>
     <br>
   </form>
-  <p><b>Please record your coughing</b></p>
+  <p><b>Please record your coughing<a target="#" onclick="openmodal()"> (Instruction)</a></b></p>
   <div id="buttons">
     <button id="brec">Record</button>
     <button id="bpause" disabled>Pause</button>
@@ -39,10 +39,19 @@
   <p><strong>List of records:</strong><br><small style="opacity: 0.5;">Please pick the best sample and upload it.</small></p>
   <ol id="records"></ol>
 
-  <div class="modal">
+  <div id="modal" class="modal" onclick="closemodal()">
     <div class="modal-grid">
       <div id="modalstatus" class="modal-grid-item">
-        <p id="modalstatustext" class="loadingtext">Chờ kết quả ... </p>
+        <div id="helptext" class="modal-grid-item">
+          <h3 id="h-ng-d-n-ghi-m-ng-c-ch-">Instruction:</h3>
+          <p>Step 1: Turn off fans and noisy appliances. </p>
+          <p>Step 2: Drink water and wear mask to prevent spreading.(Keep phone at 10-20cm distance. Avoid coughing directly toward the microphone as it may introduce more noises)</p>
+          <p>Step 3: Take a deep breath, hit record and cough 4 to 5 times then click Stop.</p>
+          <p>Step 4: Repeat steop 3 if needed then pick the best sound sample and press upload.</p>
+          <p>Step 5: Store the image result (or take a screenshot of the phone) if needed to.</p>          
+          <p>Thank you.</p>
+        </div>
+        <p id="modalstatustext" class="loadingtext"></p>
       </div>
       <div id="modalimage" class="modal-grid-item">
         <!-- <img style="padding-left:5%;max-width:90%" src=test.png> -->
