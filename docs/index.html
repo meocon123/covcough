@@ -13,8 +13,7 @@
 </head>
 
 <body>
-  <button style="background-color: #48c77400; position:absolute; margin-right:10px ;margin-top: 10px;top:0; right:0;"
-    onclick='document.location="./indexen.html"'>🇬🇧</button>
+  <button style="background-color: #48c77400; position:absolute; margin-right:10px ;margin-top: 10px;top:0; right:0;" onclick='document.location="./indexen.html"'>🇬🇧</button>
   <p>
   <h2>Covid19 coughing study</h2>
   <small>AI model developed by <a href="https://scholar.google.com/citations?user=imY-iisAAAAJ&hl=vi">Dr Nguyen Dinh Son.</a></small>
@@ -30,9 +29,9 @@
   </form>
   <p><b>Mời bạn ghi âm tiếng ho<a target="#" onclick="openmodal()"> (Hướng dẫn)</a></b></p>
   <div id="buttons">
-    <button id="brec">Record</button>
-    <button id="bpause" disabled>Pause</button>
-    <button id="bstop" disabled>Stop</button>
+    <button id="brec" class="greenbutton">Record</button>
+    <button id="bpause" class="greenbutton" disabled>Pause</button>
+    <button id="bstop" class="redbutton" disabled>Stop</button>
   </div>
 
   <p><strong>Danh sách thu âm:</strong><br><small style="opacity: 0.5;">Bạn chọn mẫu tốt nhất và ấn nút Gửi file</small>
@@ -42,9 +41,18 @@
   <div id="modalconsent" class="modaloverlay" >
     <div class="modal-grid">
       <div class="modal-grid-item">
-        <p>Tôi hiểu và đồng ý đây không phải là chương trình để kiểm tra covid19 chính thức của nhà nước. Đây là một sản phẩm đang được nghiên cứu.</p>
-        <button id="brec">Đồng ý</button> <button id="brec">Không đồng ý</button>
+        <h2>ĐỒNG Ý THAM GIA NGHIÊN CỨU</h2>
+        <p>Tôi hiểu và đồng ý đây không phải là chương trình để kiểm tra covid19 chính thức của nhà nước. <br>
+          Đây là một sản phẩm đang được nghiên cứu và tôi muốn tham gia vào nghiên cứu này.<br>
+          <br>
+          Tôi hiểu kết quả biểu đồ trên website này chỉ là để tham khảo về khả năng nhận dạng của hệ thống trí tuệ nhân tạo (AI) đang được phát triển và không phải là kết quả xét nghiệm Covid19.
+        </p>
+        <p>Nếu bạn đã tiếp xúc với F0 và có nguy cơ bị nhiễm, xin hãy đến nơi xét nghiệm theo đúng quy định của nhà nước.</p>
       </div>
+      <div class="modal-grid-item">
+        <button class="greenbutton" onclick="document.getElementById('modalconsent').style.display='none'">Tôi đồng ý</button> 
+      </div>
+      
     </div>
   </div>
 
@@ -69,6 +77,7 @@
 
     </div>
   </div>
+  
   <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
   <script>
     resulttxt = "Bạn có nguy cơ nhiễm Covid-19 với xác suất là "

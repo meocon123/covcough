@@ -39,6 +39,24 @@
   <p><strong>List of records:</strong><br><small style="opacity: 0.5;">Please pick the best sample and upload it.</small></p>
   <ol id="records"></ol>
 
+  <div id="modalconsent" class="modaloverlay" >
+    <div class="modal-grid">
+      <div class="modal-grid-item">
+        <h2>CONSENT TO PARTICIPATE IN RESEARCH</h2>
+        <p>If you give your consent, you have the option to participate in a research study conducted by Dr Nguyen Dinh Son.<br><br>
+          You understand that the study is ongoing and any data or result being shown here does not indicate if you are infected with Covid 19 or not.<br><br>
+          If you have attended a confirmed COVID-19 exposure site, please get tested properly at Covid19 testing site.
+        </p>
+        <p></p>
+      </div>
+      <div class="modal-grid-item">
+        <button class="greenbutton" onclick="document.getElementById('modalconsent').style.display='none'">I agree</button> 
+      </div>
+      
+    </div>
+  </div>
+
+
   <div id="modal" class="modal" onclick="closemodal()">
     <div class="modal-grid">
       <div id="modalstatus" class="modal-grid-item">
