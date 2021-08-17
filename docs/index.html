@@ -16,10 +16,9 @@
   <button style="background-color: #48c77400; position:absolute; margin-right:10px ;margin-top: 10px;top:0; right:0;"
     onclick='document.location="./indexen.html"'>🇬🇧</button>
   <p>
-  <h2>Covid19 coughing test</h2>
-  <small>AI model developed by Dr Nguyen Dinh Son.</small>
-  <small><i><a href=http://dut.udn.vn />University of Science and Technology,<br>The University of
-      Danang</a></i></small>
+  <h2>Covid19 coughing study</h2>
+  <small>AI model developed by <a href="https://scholar.google.com/citations?user=imY-iisAAAAJ&hl=vi">Dr Nguyen Dinh Son.</a></small>
+  <small><i>University of Science and Technology,<br>The University of Danang</i></small>
   </p>
   <form id="statuschoices"><input id="name" placeholder="tên (không nhất thiết)"></input>
     <br>
@@ -29,8 +28,7 @@
     <input type="radio" name="status" value="unknown" checked><label for="JS">Bạn chưa đi xét nghiệm</label><br>
     <br>
   </form>
-
-  <p><b>Mời bạn ghi âm tiếng ho</b></p>
+  <p><b>Mời bạn ghi âm tiếng ho<a target="#" onclick="openmodal()"> (Hướng dẫn)</a></b></p>
   <div id="buttons">
     <button id="brec">Record</button>
     <button id="bpause" disabled>Pause</button>
@@ -41,10 +39,19 @@
   </p>
   <ol id="records"></ol>
 
-  <div class="modal">
+  <div id="modal" class="modal" onclick="closemodal()">
     <div class="modal-grid">
       <div id="modalstatus" class="modal-grid-item">
-        <p id="modalstatustext" class="loadingtext">Chờ kết quả ... </p>
+        <div id="helptext" class="modal-grid-item">
+          <h3 id="h-ng-d-n-ghi-m-ng-c-ch-">Hướng dẫn ghi âm đúng cách:</h3>
+          <p>Bước 1: Người sử dụng uống một ít nước lọc, mang khẩu trang y tế để phòng ngừa lây nhiễm.(Chú ý: Để điện thoại cách miệng khoảng cách 10-20cm, không để quá xa hoặc quá gần. Tránh để micro hướng trực diện vào miệng)</p>
+          <p>Bước 2: Hít một hơi thật sâu, ấn nút Record và ho ít nhất đến 4-5 tiếng ho. Sau đó nhấn nút Stop.</p>
+          <p>Bước 3: Nhấn nút Gửi file và chờ đợi trong giây lát để nhận kết quả.</p>
+          <p>Bước 4: Lưu ảnh kết quả (chụp màn hình hoặc lưu về máy)</p>          
+          <p>Trân trọng cảm ơn.</p>
+        </div>
+        <p id="modalstatustext" class="loadingtext">    
+        </p>
       </div>
       <div id="modalimage" class="modal-grid-item">
         <!-- <img style="padding-left:5%;max-width:90%" src=test.png> -->

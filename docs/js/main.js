@@ -17,7 +17,7 @@ navigator.mediaDevices.getUserMedia({ audio: true })
 	})
 	.catch(function (err) {
 		console.log('No microphone permission!')
-		document.body.classList.add("showmodal");
+		openmodal()
 		updatemodaltext(nomictxt, false)
 	});
 
@@ -144,9 +144,18 @@ function updatemodaltext(text, flashing = false) {
 	modaltext.innerText = text;
 }
 
+function closemodal(){
+	document.body.classList.remove('showmodal')
+}
+
+function openmodal(){
+	document.body.classList.add('showmodal')
+}
+
 async function uploadToS3(datablob, originalfilename, status) {
-	var body = document.body;
-	body.classList.add("showmodal");
+	openmodal()
+	document.getElementById("modal").removeAttribute("onclick");
+	document.getElementById("helptext").style.display="none"
 	updatemodaltext("Getting presigned key to upload ...", true)
 	console.log("Getting presigned s3 URL for upload.");
 	var url = lambdaurl + '/upload/' + status;
@@ -163,7 +172,7 @@ async function uploadToS3(datablob, originalfilename, status) {
 		else {
 			updatemodaltext("Error ...", false)
 			console.log("Error getting presigned key for upload")
-			document.body.classList.remove("showmodal");
+			closemodal();
 			return false
 		}
 
@@ -192,7 +201,7 @@ async function uploadToS3(datablob, originalfilename, status) {
 			return true
 		} else {
 			console.log("Fail to upload file!")
-			document.body.classList.remove("showmodal");
+			closemodal();
 			return false
 		}
 	}
