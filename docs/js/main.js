@@ -18,6 +18,7 @@ navigator.mediaDevices.getUserMedia({ audio: true })
 	.catch(function (err) {
 		console.log('No microphone permission!');
 		document.getElementById("helptext").style.display="none";
+		document.getElementById("modal").removeAttribute("onclick");
 		openmodal()
 		updatemodaltext(nomictxt, false)
 	});
