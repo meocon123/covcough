@@ -41,7 +41,8 @@ def getposturl(filename,status):
     resp={
         "signedupload":s3.generate_presigned_post(Bucket=bkt,Key=keyname,Fields=fields,Conditions=conditions),
         "pngresult": getobj("results/{}_{}.png".format(filename,status)),
-        "jsonresult": getobj("results/{}_{}.json".format(filename,status))
+        "jsonresult": getobj("results/{}_{}.json".format(filename,status)),
+        "csvresult": getobj("results/{}_{}.csv".format(filename,status))
     }
     
 
@@ -78,9 +79,9 @@ def app_handler(event, context):
         "statusCode": 200,
         "body"  : 'ok'
     }   
-    print("Target bucket is {}".format(bkt))
     split_url = urlsplit(referer)
     clean_path = split_url.scheme+"://"+split_url.netloc 
+    print("App runs at {} and bucket is {}".format(clean_path,bkt))
     headers = {
         'Access-Control-Allow-Origin': clean_path,
         'Content-Type': "application/json"
@@ -128,8 +129,6 @@ def app_handler(event, context):
         "headers": headers,
         "body"  : json.dumps(body)
     }  
-
-
 
 
 # Our debug main - We use this to test things locally as it's not used by lambda function.

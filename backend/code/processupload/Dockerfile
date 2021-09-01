@@ -39,6 +39,9 @@ COPY Early_alexnet64x64_AIVN_val_loss.hdf5 ./
 # Copy a test file
 COPY test.wav ./
 
+# Ignore python warning
+ENV PYTHONWARNINGS=ignore
+
 # Copy the main app.py file to the container
 COPY app.py ./
 

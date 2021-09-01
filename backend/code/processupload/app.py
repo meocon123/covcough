@@ -19,9 +19,9 @@ from tensorflow import keras
 import matplotlib.pyplot as plt
 import pandas as pd
 
-SLACK_URL = os.getenv('SLACK_WEBHOOK')
+SLACK_URL         = os.getenv('SLACK_WEBHOOK')
 APIGATEWAY_LAMBDA = os.getenv('APIGATEWAY_LAMBDA')
-
+DEBUG             = os.getenv('DEBUG')
 
 def nofify_slack(payload):
     headers = {'Content-type': 'application/json'}
@@ -30,10 +30,14 @@ def nofify_slack(payload):
     resp = urllib.request.urlopen(req)
     return resp
 
+def log(msg):
+    if (DEBUG == None):
+        return
+    print(msg)
 
 def getobjmeta(bkt, key):
-    print(bkt)
-    print(key)
+    log(bkt)
+    log(key)
     s3 = boto3.client('s3')
     response = s3.head_object(Bucket=bkt, Key=key)
     # exp = datetime.datetime.strptime(expstr,'%d %b %Y %H:%M:%S %Z')
@@ -113,6 +117,7 @@ def segment_cough(x, fs, cough_padding=0.2, min_cough_len=0.2, th_l_multiplier=0
 
 
 def prediction_COVID(lmodel, filename, person, nmels=64):
+    log("prediction_COVID runs")
     # Load the audio file
     y, sr = librosa.load(filename)
     cough_segments, cough_mask = segment_cough(
@@ -121,7 +126,9 @@ def prediction_COVID(lmodel, filename, person, nmels=64):
     pos2 = []
     if len(cough_segments) == 0:
         test = 0
-        text = 'Không có tiếng ho trong tệp ghi âm'
+        text = 'No coughing sound detected'
+        ax=None
+        ps2=None
     else:
         for i in range(len(cough_segments)):
             melspec = mel_specs(cough_segments[i], sr)
@@ -134,12 +141,11 @@ def prediction_COVID(lmodel, filename, person, nmels=64):
             prob=round(test*100, 2))
     # Plot the result of each cough sound
         result = pd.DataFrame(pos2, columns=['Healthy', 'COVID-19'])
-        ax = result.plot.bar(xlabel=person, ylabel='Probability', color=[
-                             'limegreen', 'red'])
+        ax = result.plot.bar(xlabel=person, ylabel='Probability', color=[ 'limegreen', 'red'])
         for p in ax.patches:
             ax.annotate(str(round(p.get_height(), 2)), (p.get_x() * 1.005,
                         p.get_height() * 1.005), horizontalalignment='left')
-    return ax, text
+    return ax, text, pos2
 
 # Extract Melspectrogram function
 
@@ -178,11 +184,22 @@ def lambda_handler(event, context):
     except:
         sourceip = "N/A"
 
-    filename = tmppath+objkey.split("/")[-1]
+    # Check if there are subfolders between "/reports/{subfolder}/filename"
+    # This way we can track a single user using subfoldername and let them submit multiple samples into same folder.
+    log(objkey)
+    subfolder=""
+    objkeyparts = objkey.split("/")
+    if (len(objkeyparts) > 2):
+        subfolder="/".join(objkeyparts[1:len(objkeyparts)-1])+"/"
+        log("subfolder: {}".format(subfolder))
+    
+    filename = tmppath+objkeyparts[-1]
+    log("filename: {}".format(filename))
     pngresult=filename[:-4]+".png"
     jsonresult=filename[:-4]+".json"
+    csvresult=filename[:-4]+".csv"
 
-    # Download wav file
+    # Download wav file from s3 bucket
     s3 = boto3.client('s3')
     s3.download_file(bucket,objkey,filename)
 
@@ -193,22 +210,29 @@ def lambda_handler(event, context):
     # Add entry name of person
     person_name = 'anonymous'
     print("Testing Covid!")
-    img, text = prediction_COVID(final_model, filename, filename, nmels=64)
-    # Save image
-    plt.savefig(pngresult)
-    # Display result
+    img, text, prob = prediction_COVID(final_model, filename, filename, nmels=64)
     f=open(jsonresult,'w')
     f.write(json.dumps({"Result":text}))
     f.close()
-    s3.upload_file(pngresult,bucket,"results/"+pngresult.split("/")[-1])
-    s3.upload_file(jsonresult,bucket,"results/"+jsonresult.split("/")[-1])
 
+    if (img != None):
+        prob_result=np.array(prob).tolist()
+        result_data=pd.DataFrame(prob_result,columns=['Healthy','Covid-19'])
+        result_data.to_csv(csvresult)
+        # Save image
+        plt.savefig(pngresult)
+        # Upload results
+        s3.upload_file(pngresult,bucket,"results/"+subfolder+pngresult.split("/")[-1])
+        s3.upload_file(csvresult,bucket,"results/"+subfolder+csvresult.split("/")[-1])
+        # Remove temp files
+        os.remove(pngresult)
+        os.remove(csvresult)
     os.remove(filename)
-    os.remove(pngresult)
+    s3.upload_file(jsonresult,bucket,"results/"+subfolder+jsonresult.split("/")[-1])
     os.remove(jsonresult)
 
     info = getobjmeta(bucket,objkey)
-    info["resulturl"]= APIGATEWAY_LAMBDA+"/download/results/"+pngresult.split("/")[-1]
+    info["resulturl"]= APIGATEWAY_LAMBDA+"/download/results/"+subfolder+pngresult.split("/")[-1]
     info["sourceip"]=sourceip
     
     msg = '''
@@ -237,8 +261,11 @@ if __name__ == "__main__":
   #Add entry name of person
   person_name='anonymous'
   print("testing Covid!")
-  img,text=prediction_COVID(final_model,dir_path+filename,filename,nmels=64)
+  img,text,prob=prediction_COVID(final_model,dir_path+filename,filename,nmels=64)
   #Save image
-  plt.savefig('image.png')
+  plt.savefig('result.png')
   #Display result
   print(text)
+  prob_result=np.array(prob).tolist()
+  result_data=pd.DataFrame(prob_result,columns=['Healthy','Covid-19'])
+  result_data.to_csv('result.csv')

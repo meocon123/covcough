@@ -7,7 +7,7 @@
             "eventTime": "2021-08-13T12:17:53.950Z",
             "eventName": "ObjectCreated:Post",
             "userIdentity": {
-                "principalId": "AWS:AROA3GC3KCD425HTGT3BZ:covcough-prod-function"
+                "principalId": "AWS:AROA3GC3KCD425HTGT3BZ:covcough-private-function"
             },
             "requestParameters": {
                 "sourceIPAddress": "49.195.178.142"
@@ -20,14 +20,14 @@
                 "s3SchemaVersion": "1.0",
                 "configurationId": "tf-s3-lambda-20210812093551487500000001",
                 "bucket": {
-                    "name": "covcough-prod",
+                    "name": "covcough-private",
                     "ownerIdentity": {
                         "principalId": "A1Z6R9X1FHRYPK"
                     },
-                    "arn": "arn:aws:s3:::covcough-prod"
+                    "arn": "arn:aws:s3:::covcough-private"
                 },
                 "object": {
-                    "key": "records/106abc6f3a7670f83c9db42579c47635a72e59e3cfd0f21e69fb882eb96d5ffe_unknown.wav",
+                    "key": "records/6660a2adb24b556d15cec4031d979596d46a54fe63b6f5b38b71f0bcf4f36ea0/sample3_demosite.wav",
                     "size": 335916,
                     "eTag": "8cda749610a8f24772183cf6fa50cc03",
                     "sequencer": "00611662F4F098B41C"

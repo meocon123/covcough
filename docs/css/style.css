@@ -106,3 +106,16 @@ body.showmodal .modal {
 .hidden {
   display: none;
 }
+
+.addToHomescreenGadget {
+  display: none;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  margin: 0 0 0 -35px;
+  bottom: 5px;
+  height: 70px;
+  width: 70px;
+  cursor: pointer;
+  Font-size: 10px;
+}
