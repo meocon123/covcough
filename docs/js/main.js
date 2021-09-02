@@ -1,11 +1,5 @@
-// Change to your lambda endpoint here
-var lambdaurl = 'https://private.covcough.com';
-
-// Temporary redirect when the app is still in development.
-if (document.location.origin.indexOf("localhost") == -1 && document.location.origin.indexOf("192.168") == -1  && document.location.origin.indexOf("surge.sh") == -1){
-	document.location = "./underconstruction.html";
-}
-
+/// PWA app component
+///
 //Register the service worker.
 if('serviceWorker' in navigator) {
 	navigator.serviceWorker
@@ -34,17 +28,21 @@ function isIos() {
 	}, 5000)
 } 
   
+///////////// MAIN APP starts here //////////////////
 
 var audioStream; 						//stream from getUserMedia()
 var rec; 							//Recorder.js object
 var input; 							//MediaStreamAudioSourceNode we'll be recording
 demosite = false;
+
+// Check if we are on demosite or localhost instance. If we are, disable name input and use "demositedata"
 if (document.location.origin.indexOf("localhost") != -1 || document.location.origin.indexOf("covcough.surge.sh") != -1) {
 	document.getElementById("name").value = "demositedata_pleaseignore"
 	document.getElementById("name").style.display = "none";
 	demosite = true;
 }
 
+// Check whether we have access to Microphone or not. If not, block access to the app and show modal overlay.
 navigator.mediaDevices.getUserMedia({ audio: true })
 	.then(function (stream) {
 		console.log('We have microphone permission!')
@@ -57,8 +55,7 @@ navigator.mediaDevices.getUserMedia({ audio: true })
 		updatemodaltext(nomictxt, false)
 	});
 
-// document.body.classList.add("showmodal");
-
+/////////////// AUDIO recording component ///////////////////
 // shim for AudioContext when it's not avb. 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext //audio context to help us record
@@ -141,6 +138,8 @@ function stopRecording() {
 	rec.exportWAV(createDownloadLink);
 }
 
+///////////////// INTERACT WITH COVCOUGH API //////////////////
+
 async function pollresult(resultjson, counter) {
 	counter += 1;
 	pngresult = resultjson.pngresult;
@@ -161,41 +160,19 @@ async function pollresult(resultjson, counter) {
 	}
 }
 
-function updatemodalimage(url) {
-	modalimage = document.getElementById("modalimage");
-	modalimage.innerHTML = "";
-	img = document.createElement('img');
-	img.src = url
-	img.style.cssText = "padding-left: 5%;max-width: 90%;"
-	modalimage.appendChild(img);
-}
-
-function updatemodaltext(text, flashing = false) {
-	modaltext = document.getElementById("modalstatustext")
-	if (flashing) {
-		modaltext.classList.add("loadingtext");
-	} else {
-		modaltext.classList.remove("loadingtext");
-	}
-	modaltext.innerText = text;
-}
-
-function closemodal(){
-	document.body.classList.remove('showmodal')
-}
-
-function openmodal(){
-	document.body.classList.add('showmodal')
-}
-
-async function uploadToS3(datablob, originalfilename, status) {
+async function uploadToS3_default(datablob, originalfilename, status) {
 	openmodal()
 	document.getElementById("modal").removeAttribute("onclick");
 	document.getElementById("helptext").style.display="none"
 	updatemodaltext("Getting presigned key to upload ...", true)
 	console.log("Getting presigned s3 URL for upload.");
+	// If a timetoken exist, include it.
 	var url = lambdaurl + '/upload/' + status;
-
+	token = getUrlVars()["token"];
+	if (token != undefined) {
+		url += "?token=" + token
+	}
+	
 	var filemetadata = {
 		name: originalfilename
 	}
@@ -247,6 +224,93 @@ async function uploadToS3(datablob, originalfilename, status) {
 		return false
 	}
 }
+
+
+async function uploadToS3_individual(datablob, originalfilename, status) {
+	openmodal()
+	document.getElementById("modal").removeAttribute("onclick");
+	document.getElementById("helptext").style.display="none"
+	updatemodaltext("Getting presigned key to upload ...", true)
+	console.log("Getting presigned s3 URL for upload.");
+	// Include the individual token
+	var url = lambdaurl + '/upload/' + status;
+	token = getUrlVars()["token"];
+	if (token != undefined) {
+		url += "?token=" + token
+	}
+	var filemetadata = {
+		name: originalfilename
+	}
+
+	try {
+		response = await fetch(url);
+		if (response.ok) {
+			responsejson = await response.json()
+		}
+		else {
+			updatemodaltext("Error ...", false)
+			console.log("Error getting presigned key for upload")
+			closemodal();
+			return false
+		}
+
+		signedupload = responsejson.signedupload
+		verifieddevice = true;
+		if (signedupload.fields.key.match("sample1_positive.wav")){
+			console.log("New device - finger print")
+			fingerprint(token);
+		} else {
+			console.log("Old device - verify finger print")
+			verifieddevice = checkfingerprint(token);
+		}
+		if (!verifieddevice){
+			updatemodaltext("Chương trình lấy mẫu vẫn đang trong thời gian thử nghiệm, Xin đừng chia xẻ và chỉ dùng link trên một thiết bị!", false)
+			return
+		}
+		const formData = new FormData();
+		formData.append("Content-Type", "audio/wav");
+		formData.append("x-amz-meta-tag", (JSON.stringify(filemetadata)))
+		Object.entries(signedupload.fields).forEach(([k, v]) => {
+			formData.append(k, v);
+		});
+		formData.append("file", datablob);
+		updatemodaltext("Uploading to S3 ...", true)
+		response = await fetch(
+			signedupload.url,
+			{
+				method: "POST",
+				body: formData,
+			})
+
+		if (response.status == 204) {
+			updatemodaltext("Please wait for result ...", true);
+			console.log("File successfully uploaded!");
+			pollresult(responsejson, 0);
+			// document.body.classList.remove("showmodal");
+			return true
+		} else {
+			console.log("Fail to upload file!")
+			closemodal();
+			return false
+		}
+	}
+	catch (err) {
+		console.log("Failed to upload"); // This is where you run code if the server returns any errors
+		console.log(err);
+		return false
+	}
+}
+
+uploadToS3 = uploadToS3_default
+
+token = getUrlVars()["token"];
+if (token != undefined) {
+	// If this is an individual token
+	if (token.startsWith("id:")) {
+		uploadToS3 = uploadToS3_individual
+	}
+}
+
 
 
 function createDownloadLink(blob) {
@@ -313,4 +377,67 @@ function createDownloadLink(blob) {
 
 	//add the li element to the ol
 	records.appendChild(li);
+}
+
+objurl = getUrlVars()["obj"]
+if (objurl != undefined) {
+    datastoreregion=getUrlVars()["region"]
+    bFileRegion.innerText = regions[datastoreregion]
+    getMetadata(objurl);
+} else {
+    btnDecrypt.disabled = true;
+}
+
+
+//////////////// HELPER FUNCTIONS /////////////////
+
+
+function getUrlVars() {
+    urlwithoutanchor=window.location.href.split("#")[0]
+    var vars = {};
+    var parts = urlwithoutanchor.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+// A super simple fingerprint just to make it harder to share the URL
+function fingerprint(token) {
+	document.cookie = "token="+token+"; expires=Tue, 01 Jan 2099 00:00:00 UTC; path=/"
+}
+
+// Just simply check if the token exist in the cookie. Can be bypass easily but is acceptable risk
+function checkfingerprint(token) {
+	if (document.cookie.match(token)){
+		return true
+	} else {
+		return false
+	}
+}
+
+function updatemodalimage(url) {
+	modalimage = document.getElementById("modalimage");
+	modalimage.innerHTML = "";
+	img = document.createElement('img');
+	img.src = url
+	img.style.cssText = "padding-left: 5%;max-width: 90%;"
+	modalimage.appendChild(img);
+}
+
+function updatemodaltext(text, flashing = false) {
+	modaltext = document.getElementById("modalstatustext")
+	if (flashing) {
+		modaltext.classList.add("loadingtext");
+	} else {
+		modaltext.classList.remove("loadingtext");
+	}
+	modaltext.innerText = text;
+}
+
+function closemodal(){
+	document.body.classList.remove('showmodal')
+}
+
+function openmodal(){
+	document.body.classList.add('showmodal')
 }

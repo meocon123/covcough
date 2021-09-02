@@ -204,6 +204,7 @@ def app_handler(event, context):
                     t = int(signeddata.split(":")[1].encode('utf-8'))
                     if (int(time.time()) < t):
                         body = gettimetokenurl(status)
+                        statuscode = 200
                     else:
                         return {
                             "statusCode": 403,
@@ -212,7 +213,7 @@ def app_handler(event, context):
                         }
                 elif signeddata.startswith("id"):
                     userid=signeddata.split(":")[1]
-                    body=getindividualurl(userid,status)
+                    body = getindividualurl(userid,status)
                     statuscode = 200
             except Exception as e: 
                 print("Some thing went wrong...")
@@ -224,7 +225,8 @@ def app_handler(event, context):
             secret = event["queryStringParameters"]["secret"]
             if secret == adminsecret:
                 numberoftoken=abs(int(path[21:]))
-                body=generateindividualtokens(numberoftoken)
+                body = generateindividualtokens(numberoftoken)
+                statuscode = 200
 
     ## /admin/gettimetoken/n generate a token that expire in n hours.
     elif path.startswith("/admin/gettimetoken/"):
@@ -232,7 +234,8 @@ def app_handler(event, context):
             secret = event["queryStringParameters"]["secret"]
             if secret == adminsecret:
                 numberofhours=abs(int(path[20:]))
-                body=generatetimetoken(numberofhours)
+                body = generatetimetoken(numberofhours)
+                statuscode = 200
     ## getfile return a signed S3 url in a json response.
     elif path.startswith("/getfile"):
         print("getfile request received")

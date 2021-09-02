@@ -19,6 +19,10 @@ footer {
     background-color: #f54d4d;
 }
 
+button.orangebutton {
+  background-color: #f16100;
+}
+
 #disagree{
   background-color: #f54d4d;
 }
