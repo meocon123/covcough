@@ -21,13 +21,13 @@
   <p>
   <h2>Admin</h2>
   </p>
-  <form id="statuschoices"  onsubmit="getindividualtokens()">
+  <div>
     <label for="password"><b>Password</b></label><br>
     <input id="password" type="password" placeholder=""></input>
     <label for="quantity"><b>Số lượng link cần xuất:</b></label><br>
     <input type="number" id="quantity" name="quantity" min="1" max="100" value="5"><br>
-    <input type="submit" value="Submit">
-  </form>
+    <button onclick="getindividualtokens()">Submit</button>
+  </div>
   
   <p><strong>Link to share:</strong><br>
     <button id="buttoncopy" class="orangebutton" onclick="copytextarea()" style="display:none">Click to Copy</button>
