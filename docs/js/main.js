@@ -256,7 +256,7 @@ async function uploadToS3_individual(datablob, originalfilename, status) {
 
 		signedupload = responsejson.signedupload
 		verifieddevice = true;
-		if (signedupload.fields.key.match("sample1_positive.wav")){
+		if (signedupload.fields.key.match("sample1_")){
 			console.log("New device - finger print")
 			fingerprint(token);
 		} else {
