@@ -77,6 +77,10 @@ variable "privateapicustomdomaincertificatearn" {
   type = string
 }
 
+variable "ADMINSECRET" {
+  type = string 
+}
+
 
 
 module "private_covcough" {
@@ -92,6 +96,7 @@ module "private_covcough" {
     "SLACK_WEBHOOK"       = var.SLACK_WEBHOOK
     "SIGNINGKEY"          = var.SIGNINGKEY
     "DEBUG"               = "True"
+    "ADMINSECRET"         = var.ADMINSECRET
   }
 }
 

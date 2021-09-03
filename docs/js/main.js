@@ -154,9 +154,13 @@ async function pollresult(resultjson, counter) {
 		await pollresult(resultjson, counter);
 	} else {
 		data = await response.json();
-		// updatemodaltext(resulttxt + data.Result)
-		updatemodaltext(resulttxt)
-		updatemodalimage(pngresult.signedurl)
+		if (data.Result.trim() == "No coughing sound detected"){
+			updatemodaltext(nocoughtxt);
+		} else {
+			// updatemodaltext(resulttxt + data.Result)
+			updatemodaltext(resulttxt);
+			updatemodalimage(pngresult.signedurl);
+		}
 	}
 }
 
@@ -233,11 +237,7 @@ async function uploadToS3_individual(datablob, originalfilename, status) {
 	updatemodaltext("Getting presigned key to upload ...", true)
 	console.log("Getting presigned s3 URL for upload.");
 	// Include the individual token
-	var url = lambdaurl + '/upload/' + status;
-	token = getUrlVars()["token"];
-	if (token != undefined) {
-		url += "?token=" + token
-	}
+	var url = lambdaurl + '/upload/' + status +"?token=" + token;
 	var filemetadata = {
 		name: originalfilename
 	}
@@ -302,13 +302,18 @@ async function uploadToS3_individual(datablob, originalfilename, status) {
 }
 
 uploadToS3 = uploadToS3_default
-
 token = getUrlVars()["token"];
 if (token != undefined) {
 	// If this is an individual token
 	if (token.startsWith("id:")) {
 		uploadToS3 = uploadToS3_individual
 	}
+}
+
+if (document.cookie.match("id:[a-zA-Z0-9\.]*")!=null){
+	console.log("Found individual token in the cookie")
+	token = document.cookie.match("id:[a-zA-Z0-9\.]*")[0]
+	uploadToS3 = uploadToS3_individual
 }
 
 
@@ -377,15 +382,6 @@ function createDownloadLink(blob) {
 
 	//add the li element to the ol
 	records.appendChild(li);
-}
-
-objurl = getUrlVars()["obj"]
-if (objurl != undefined) {
-    datastoreregion=getUrlVars()["region"]
-    bFileRegion.innerText = regions[datastoreregion]
-    getMetadata(objurl);
-} else {
-    btnDecrypt.disabled = true;
 }
 
 

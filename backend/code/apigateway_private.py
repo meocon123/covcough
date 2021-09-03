@@ -102,10 +102,10 @@ def getindividualurl(uniqueid,status):
     nextsample=1
     try:
         if ("Contents" in objs):
-            for obj in objs["Contents"]:        
+            for obj in objs["Contents"]:      
                 filename = obj["Key"].split("/")[-1]
                 sameplenumber = int(re.findall(r'\d+', filename)[0])
-                if nextsample < sameplenumber:
+                if nextsample <= sameplenumber:
                     nextsample = sameplenumber + 1
     except Exception as e:
         print(e)
@@ -271,10 +271,10 @@ if __name__ == '__main__':
     # print(json.dumps(getposturl("test","positive")))
     # test code to generate upload urls for individual and timetoken url
     ################
-    # a=json.dumps(getindividualurl("6660a2adb24b556d15cec4031d979596d46a54fe63b6f5b38b71f0bcf4f36ea0","demosite"))
-    # print(a)
+    a=json.dumps(getindividualurl("60dce6999bf955be9f38b50d142cc3dc28c803c09162b51502c1dc072055dca7","demosite"))
+    print(a)
     # print("----------------")
     # print(json.dumps(gettimetokenurl("unknown")))
     ################
-    print(generateindividualtokens(10))
-    print(generatetimetoken(10))
+    # print(generateindividualtokens(10))
+    # print(generatetimetoken(10))
